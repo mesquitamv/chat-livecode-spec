@@ -45,7 +45,7 @@ jobs:
       - name: Download backend file tag
         uses: bettermarks/action-artifact-download@0.3.0
         with:
-          repo: mesquitamv/tchat-backend
+          repo: mesquitamv/chat-livecode-backend
           token: ${{ secrets.GIT_TOKEN }}
           artifact_name: backend_tag_staging.txt
           rename: backend_tag_staging.txt.zip    
