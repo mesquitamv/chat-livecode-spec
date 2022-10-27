@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: livecode-stg
+  namespace: PLACE_HOLDER_NAMESPACE
   labels:
     app: backend
 spec:
@@ -17,7 +17,7 @@ spec:
         app: backend
     spec:
       containers:
-        - image: marcusvmesquita/chat-livecode-backend:latest
+        - image: marcusvmesquita/chat-livecode-backend:PLACE_HOLDER_BACKEND_TAG
           name: chat-livecode-backend
           resources:
             requests:

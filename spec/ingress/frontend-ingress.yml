@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend
-  namespace: livecode-stg
+  namespace: PLACE_HOLDER_NAMESPACE
   labels:
     app: frontend
   annotations:
@@ -10,7 +10,7 @@ metadata:
     kubernetes.io/ingress.class: "nginx-external"
 spec:
   rules:
-    - host: chat.stg.totvs-livecode.com
+    - host: chatPLACE_HOLDER_DOMAIN
       http:
         paths:
           - path: /
@@ -22,5 +22,5 @@ spec:
                     number: 3000
   tls:
     - hosts:
-      - chat.stg.totvs-livecode.com
-      secretName: chat.stg.totvs-livecode.com-tls
+      - chatPLACE_HOLDER_DOMAIN
+      secretName: chatPLACE_HOLDER_DOMAIN-tls

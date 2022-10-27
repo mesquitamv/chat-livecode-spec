@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: livecode-stg
+  namespace: PLACE_HOLDER_NAMESPACE
   labels:
     app: frontend
 spec:
@@ -17,7 +17,7 @@ spec:
         app: frontend
     spec:
       containers:
-        - image: marcusvmesquita/chat-livecode-frontend:latest
+        - image: marcusvmesquita/chat-livecode-frontend:PLACE_HOLDER_FRONTEND_TAG
           name: chat-livecode-frontend
           resources:
             requests:
@@ -28,7 +28,7 @@ spec:
               cpu: 1000m
           env: 
             - name: REACT_APP_BASEURL
-              value: "https://api.chat.stg.totvs-livecode.com/"
+              value: "https://api.chatPLACE_HOLDER_DOMAIN/"
           ports:
             - containerPort: 3000
               name: http-port

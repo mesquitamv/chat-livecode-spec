@@ -1,4 +1,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: livecode-stg
+  name: PLACE_HOLDER_NAMESPACE
