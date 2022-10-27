@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: livecode-stg
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - image: marcusvmesquita/chat-livecode-backend:latest
+          name: chat-livecode-backend
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 500m
+            limits:
+              memory: 512Mi
+              cpu: 1000m
+          env: 
+            - name: PORT
+              value: "3001"
+          ports:
+            - containerPort: 3001
+              name: api-port

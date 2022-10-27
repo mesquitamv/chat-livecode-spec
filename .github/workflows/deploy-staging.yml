@@ -1,0 +1,40 @@
+name: deploy spec staging
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  AWS_PROFILE_NAME: default
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+jobs:
+  deplo-on-eks:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: checkout repo
+        uses: actions/checkout@v3
+    
+      - name: Apply namespace
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/namespace/
+      
+      - name: Apply deployment
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/deployment/
+
+      - name: Apply service
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/service/
+
+      - name: Apply ingress
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/ingress/

@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: livecode-stg
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - image: marcusvmesquita/chat-livecode-frontend:latest
+          name: chat-livecode-frontend
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 500m
+            limits:
+              memory: 512Mi
+              cpu: 1000m
+          env: 
+            - name: REACT_APP_BASEURL
+              value: "https://api.chat.stg.totvs-livecode.com/"
+          ports:
+            - containerPort: 3000
+              name: http-port
