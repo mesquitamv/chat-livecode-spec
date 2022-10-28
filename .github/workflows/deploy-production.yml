@@ -1,0 +1,86 @@
+name: deploy production
+
+on:
+  push:
+    tags:
+      - v*
+  repository_dispatch:
+    type: [deploy_production]
+
+env:
+  AWS_PROFILE_NAME: default
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+  NAMESPACE: livecode
+  DOMAIN: .totvs-livecode.com
+
+jobs:
+  deploy-on-eks:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Run replace namespace
+        run: devops/scripts/replace_namespace.sh $(pwd)/spec/
+      
+      - name: Run replace domain
+        run: devops/scripts/replace_domain.sh $(pwd)/spec/
+
+      - name: Download frontend file tag
+        uses: bettermarks/action-artifact-download@0.3.0
+        with:
+          repo: mesquitamv/chat-livecode-frontend
+          token: ${{ secrets.GIT_TOKEN }}
+          artifact_name: frontend_tag_production.txt
+          rename: frontend_tag_production.txt.zip    
+          wait_seconds: 60
+
+      - name: Unzip frontend tag file
+        run: unzip frontend_tag_production.txt.zip
+      
+      - name: Download backend file tag
+        uses: bettermarks/action-artifact-download@0.3.0
+        with:
+          repo: mesquitamv/chat-livecode-backend
+          token: ${{ secrets.GIT_TOKEN }}
+          artifact_name: backend_tag_production.txt
+          rename: backend_tag_production.txt.zip    
+          wait_seconds: 60
+
+      - name: Unzip backend tag file
+        run: unzip backend_tag_production.txt.zip
+
+      - name: Replace frontend tag
+        run: devops/scripts/replace_tags.sh $(pwd)/spec/ FRONTEND $(cat frontend_tag_production.txt)
+
+      - name: Replace backend tag
+        run: devops/scripts/replace_tags.sh $(pwd)/spec/ BACKEND $(cat backend_tag_production.txt)
+
+      - uses: lra/setup-kubeval@v1
+
+      - name: Kubernetes yaml lint test
+        run: kubeval --ignore-missing-schemas spec/*/*
+
+      - name: Apply namespace
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/namespace
+      
+      - name: Apply deployment
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/deployment
+
+      - name: Apply service
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/service
+        
+      - name: Apply ingress
+        uses: Pablommr/kubernetes-eks@v1.0.0
+        env:
+          KUBE_YAML: spec/ingress
